@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"github.com/tidwall/gjson"
 	"regexp"
 	"strings"
@@ -114,7 +113,7 @@ func MakeComment(singeRequest Request) []string {
 		comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Schema(")
 
 		bodyComment := make([]LineComment, 0)
-		bodyComment = Json2Comemt(gjson.Parse(singeRequest.Body.Content.(string)), blankIndex, bodyComment)
+		bodyComment = Comment(gjson.Parse(singeRequest.Body.Content.(string)), blankIndex, bodyComment)
 
 		for _, singleBodyComment := range bodyComment {
 			comment = append(comment, blankRepeat(blankIndex+singleBodyComment.IndentNum)+singleBodyComment.Content)
@@ -142,7 +141,7 @@ func MakeComment(singeRequest Request) []string {
 	comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Schema(")
 
 	responseComment := make([]LineComment, 0)
-	responseComment = Json2Comemt(gjson.Parse(singeRequest.Response), blankIndex, responseComment)
+	responseComment = Comment(gjson.Parse(singeRequest.Response), blankIndex, responseComment)
 
 	for _, singleResponse := range responseComment {
 		comment = append(comment, blankRepeat(blankIndex+singleResponse.IndentNum)+singleResponse.Content)
@@ -161,7 +160,7 @@ func blankRepeat(num int) string {
 func strRepeat(str string, num int) string {
 	return strings.Repeat(str, num)
 }
-func Json2Comemt(json gjson.Result, level int, responseComment []LineComment) []LineComment {
+func Comment(json gjson.Result, level int, responseComment []LineComment) []LineComment {
 	json.ForEach(func(key, value gjson.Result) bool {
 		switch value.Type.String() {
 		case "Number":
@@ -210,7 +209,7 @@ func Json2Comemt(json gjson.Result, level int, responseComment []LineComment) []
 					//lineStart.Content = "@SWG\\Property( property=\"" + key.String() + "\" ,type=\"array\","
 					lineStart.IndentNum = level
 					responseComment = append(responseComment, lineStart)
-					responseComment = Json2Comemt(value, level+1, responseComment)
+					responseComment = Comment(value, level+1, responseComment)
 
 					lineEnd := LineComment{}
 					lineEnd.Content = "),"
@@ -222,7 +221,7 @@ func Json2Comemt(json gjson.Result, level int, responseComment []LineComment) []
 				lineStart.Content = "@SWG\\Property( property=\"" + key.String() + "\" ,type=\"object\","
 				lineStart.IndentNum = level
 				responseComment = append(responseComment, lineStart)
-				responseComment = Json2Comemt(value, level+1, responseComment)
+				responseComment = Comment(value, level+1, responseComment)
 
 				lineEnd := LineComment{}
 				lineEnd.Content = "),"
@@ -241,7 +240,7 @@ func Json2Comemt(json gjson.Result, level int, responseComment []LineComment) []
 			break
 		default:
 			//fmt.Println(value.Type.String())
-			fmt.Println(key.String())
+			//fmt.Println(key.String())
 		}
 
 		return true
