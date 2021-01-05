@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	inputFile = flag.String("source", "/Users/yons/Downloads/test01.json", "Postman 导出的json文件")
+	inputFile = flag.String("source", "/Users/yangshiguo/Downloads/test01.json", "Postman 导出的json文件")
 	//inputFile  = flag.String("source", "/Users/zabon/Desktop/code/元典接口/yang/crm-yang.20191231.json", "Postman 导出的json文件")
-	outputFile = flag.String("output", "/Users/yons/code/swagger-php/result.php", "产生的注释文件")
+	outputFile = flag.String("output", "/Users/yangshiguo/code/swagger-php/result.php", "产生的注释文件")
 
 	host        = flag.String("host", "192.168.2.199:8086", "项目地址,例如：ilessonpen.com")
 	basePath    = flag.String("base_path", "/", "项目地址,例如 /")

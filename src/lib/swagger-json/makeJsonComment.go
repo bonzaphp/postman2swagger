@@ -72,7 +72,7 @@ func MakeComment(singeRequest lib.Request) []string {
 	comment = append(comment, blankRepeat(blankIndex)+tags)
 
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"]")
+	comment = append(comment, blankRepeat(blankIndex)+"\"]\"")
 
 	//summary
 	summary := strings.Replace(singeRequest.Name, "/", "-", -1)
@@ -95,7 +95,7 @@ func MakeComment(singeRequest lib.Request) []string {
 		var n string
 		n = strings.Replace(s, "{", "", 1)
 		n = strings.Replace(n, "}", "", 1)
-		singeParameter = "@SWG\\Parameter(name =\"" + n + "\", type=\"" + "integer" + "\", required=true, in=\"path\",description=\"" + "路径参数" + "\",format=\"" + "int64" + "\"),"
+		singeParameter = "parameters(name =\"" + n + "\", type=\"" + "integer" + "\", required=true, in=\"path\",description=\"" + "路径参数" + "\",format=\"" + "int64" + "\"),"
 	}
 
 	comment = append(comment, blankRepeat(blankIndex)+singeParameter)
@@ -106,9 +106,9 @@ func MakeComment(singeRequest lib.Request) []string {
 
 	for parameterIndex < queryNum {
 		if singeRequest.Query[parameterIndex].Disabled == "true" {
-			singeParameter = "@SWG\\Parameter(name =\"" + singeRequest.Query[parameterIndex].Key + "\", type=\"" + singeRequest.Query[parameterIndex].Type + "\", required=false, in=\"query\",description=\"" + singeRequest.Query[parameterIndex].Description + "\"),"
+			singeParameter = "parameters(name =\"" + singeRequest.Query[parameterIndex].Key + "\", type=\"" + singeRequest.Query[parameterIndex].Type + "\", required=false, in=\"query\",description=\"" + singeRequest.Query[parameterIndex].Description + "\"),"
 		} else {
-			singeParameter = "@SWG\\Parameter(name =\"" + singeRequest.Query[parameterIndex].Key + "\", type=\"" + singeRequest.Query[parameterIndex].Type + "\", required=true, in=\"query\",description=\"" + singeRequest.Query[parameterIndex].Description + "\"),"
+			singeParameter = "parameters(name =\"" + singeRequest.Query[parameterIndex].Key + "\", type=\"" + singeRequest.Query[parameterIndex].Type + "\", required=true, in=\"query\",description=\"" + singeRequest.Query[parameterIndex].Description + "\"),"
 		}
 		comment = append(comment, blankRepeat(blankIndex)+singeParameter)
 		parameterIndex = parameterIndex + 1
@@ -116,7 +116,7 @@ func MakeComment(singeRequest lib.Request) []string {
 
 	//Body
 	if singeRequest.Body.Mode == "raw" {
-		comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Schema(")
+		comment = append(comment, blankRepeat(blankIndex)+"schema(")
 
 		bodyComment := make([]LineComment, 0)
 		bodyComment = Comment(gjson.Parse(singeRequest.Body.Content.(string)), blankIndex, bodyComment)
@@ -128,23 +128,23 @@ func MakeComment(singeRequest lib.Request) []string {
 
 	} else if singeRequest.Body.Mode == "formdata" {
 		for _, singleBodyParameter := range singeRequest.Body.Content.([]lib.Parameter) {
-			//singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"body\",description=\"" + singleBodyParameter.Description + "\"),"
-			singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
+			//singeBodyParameter := "Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"body\",description=\"" + singleBodyParameter.Description + "\"),"
+			singeBodyParameter := "parameters(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
 			comment = append(comment, blankRepeat(blankIndex)+singeBodyParameter)
 		}
 	} else if singeRequest.Body.Mode == "urlencoded" {
 		for _, singleBodyParameter := range singeRequest.Body.Content.([]lib.Parameter) {
-			singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
+			singeBodyParameter := "parameters(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
 			comment = append(comment, blankRepeat(blankIndex)+singeBodyParameter)
 		}
 	}
 
 	//Response
-	comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Response(")
+	comment = append(comment, blankRepeat(blankIndex)+"response(")
 	blankIndex = blankIndex + 1
 	comment = append(comment, blankRepeat(blankIndex)+"response=\"200\",")
 	comment = append(comment, blankRepeat(blankIndex)+"description=\"接口响应\",")
-	comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Schema(")
+	comment = append(comment, blankRepeat(blankIndex)+"Schema(")
 
 	responseComment := make([]LineComment, 0)
 	responseComment = Comment(gjson.Parse(singeRequest.Response), blankIndex, responseComment)
@@ -179,7 +179,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 			} else {
 				thisType = "int"
 			}
-			line.Content = "@SWG\\Property( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
+			line.Content = "Property( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
 			line.IndentNum = level
 			responseComment = append(responseComment, line)
 			break
@@ -193,7 +193,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 			} else {
 				thisType = "string"
 			}
-			line.Content = "@SWG\\Property( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
+			line.Content = "properties( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
 			line.IndentNum = level
 			responseComment = append(responseComment, line)
 			break
@@ -203,7 +203,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 				len := len(value.Array())
 				if len == 0 {
 					line := LineComment{}
-					line.Content = "@SWG\\Property( property=\"data\" , type=\"string\" , example=\"\",description=\"填写描述\"),"
+					line.Content = "properties( property=\"data\" , type=\"string\" , example=\"\",description=\"填写描述\"),"
 					line.IndentNum = level
 					responseComment = append(responseComment, line)
 
@@ -211,8 +211,8 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 					value = value.Array()[0]
 
 					lineStart := LineComment{}
-					lineStart.Content = "@SWG\\Property( property=\"" + key.String() + "\" ,type=\"object\","
-					//lineStart.Content = "@SWG\\Property( property=\"" + key.String() + "\" ,type=\"array\","
+					lineStart.Content = "properties( property=\"" + key.String() + "\" ,type=\"object\","
+					//lineStart.Content = "Property( property=\"" + key.String() + "\" ,type=\"array\","
 					lineStart.IndentNum = level
 					responseComment = append(responseComment, lineStart)
 					responseComment = Comment(value, level+1, responseComment)
@@ -224,7 +224,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 				}
 			} else {
 				lineStart := LineComment{}
-				lineStart.Content = "@SWG\\Property( property=\"" + key.String() + "\" ,type=\"object\","
+				lineStart.Content = "properties( property=\"" + key.String() + "\" ,type=\"object\","
 				lineStart.IndentNum = level
 				responseComment = append(responseComment, lineStart)
 				responseComment = Comment(value, level+1, responseComment)
@@ -240,7 +240,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 			thisValue := value.String()
 			thisType := "bool"
 
-			line.Content = "@SWG\\Property( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
+			line.Content = "properties( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
 			line.IndentNum = level
 			responseComment = append(responseComment, line)
 			break
