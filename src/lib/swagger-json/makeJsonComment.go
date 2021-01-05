@@ -47,21 +47,21 @@ func MakeTile(host string, basePath string, version string, title string, descri
 	blankIndex = blankIndex - 1
 	comment = append(comment, blankRepeat(blankIndex)+"}")
 
+	comment = append(comment, blankRepeat(blankIndex)+"\"paths\": {")
+
 	return comment
 }
 
 func MakeComment(singeRequest lib.Request) []string {
 	comment := make([]string, 0)
-	blankIndex := 1
-	comment = append(comment, blankRepeat(blankIndex)+"\"paths\": {")
-	blankIndex = blankIndex + 1
+	blankIndex := 2
 
 	//path
 	comment = append(comment, blankRepeat(blankIndex)+"\""+singeRequest.Path+"\": {")
 	blankIndex = blankIndex + 1
 
-	//请求方式
-	comment = append(comment, "\""+singeRequest.Method+"\": {")
+	//请求方式method
+	comment = append(comment, blankRepeat(blankIndex)+"\""+singeRequest.Method+"\": {")
 	blankIndex = blankIndex + 1
 
 	//tags
@@ -69,10 +69,10 @@ func MakeComment(singeRequest lib.Request) []string {
 	comment = append(comment, blankRepeat(blankIndex)+"\"tags\": [")
 	blankIndex = blankIndex + 1
 
-	comment = append(comment, blankRepeat(blankIndex)+tags)
+	comment = append(comment, blankRepeat(blankIndex)+"\""+tags+"\"")
 
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"\"]\"")
+	comment = append(comment, blankRepeat(blankIndex)+"]")
 
 	//summary
 	summary := strings.Replace(singeRequest.Name, "/", "-", -1)
@@ -116,7 +116,7 @@ func MakeComment(singeRequest lib.Request) []string {
 
 	//Body
 	if singeRequest.Body.Mode == "raw" {
-		comment = append(comment, blankRepeat(blankIndex)+"schema(")
+		comment = append(comment, blankRepeat(blankIndex)+"\"schema:\"{")
 
 		bodyComment := make([]LineComment, 0)
 		bodyComment = Comment(gjson.Parse(singeRequest.Body.Content.(string)), blankIndex, bodyComment)
@@ -124,7 +124,7 @@ func MakeComment(singeRequest lib.Request) []string {
 		for _, singleBodyComment := range bodyComment {
 			comment = append(comment, blankRepeat(blankIndex+singleBodyComment.IndentNum)+singleBodyComment.Content)
 		}
-		comment = append(comment, blankRepeat(blankIndex)+"),")
+		comment = append(comment, blankRepeat(blankIndex)+"},")
 
 	} else if singeRequest.Body.Mode == "formdata" {
 		for _, singleBodyParameter := range singeRequest.Body.Content.([]lib.Parameter) {
@@ -140,11 +140,11 @@ func MakeComment(singeRequest lib.Request) []string {
 	}
 
 	//Response
-	comment = append(comment, blankRepeat(blankIndex)+"response(")
+	comment = append(comment, blankRepeat(blankIndex)+"\"responses\":{")
 	blankIndex = blankIndex + 1
 	comment = append(comment, blankRepeat(blankIndex)+"response=\"200\",")
 	comment = append(comment, blankRepeat(blankIndex)+"description=\"接口响应\",")
-	comment = append(comment, blankRepeat(blankIndex)+"Schema(")
+	comment = append(comment, blankRepeat(blankIndex)+"\"schema\":{")
 
 	responseComment := make([]LineComment, 0)
 	responseComment = Comment(gjson.Parse(singeRequest.Response), blankIndex, responseComment)
@@ -152,11 +152,11 @@ func MakeComment(singeRequest lib.Request) []string {
 	for _, singleResponse := range responseComment {
 		comment = append(comment, blankRepeat(blankIndex+singleResponse.IndentNum)+singleResponse.Content)
 	}
-	comment = append(comment, blankRepeat(blankIndex)+")")
+	comment = append(comment, blankRepeat(blankIndex)+"}")
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+")")
+	comment = append(comment, blankRepeat(blankIndex)+"}")
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+")")
+	comment = append(comment, blankRepeat(blankIndex)+"}")
 	return comment
 }
 
@@ -179,7 +179,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 			} else {
 				thisType = "int"
 			}
-			line.Content = "Property( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
+			line.Content = "properties( property=\"" + key.String() + "\" , type=\"" + thisType + "\" , example=\"" + thisValue + "\",description=\"填写描述\"),"
 			line.IndentNum = level
 			responseComment = append(responseComment, line)
 			break
@@ -218,7 +218,7 @@ func Comment(json gjson.Result, level int, responseComment []LineComment) []Line
 					responseComment = Comment(value, level+1, responseComment)
 
 					lineEnd := LineComment{}
-					lineEnd.Content = "),"
+					lineEnd.Content = "},"
 					lineEnd.IndentNum = level
 					responseComment = append(responseComment, lineEnd)
 				}

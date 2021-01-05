@@ -58,7 +58,7 @@ func main() {
 	for _, c := range comment {
 		commentString = joinComment(commentString, c)
 	}
-	commentString = joinComment(commentString, "\n\n")
+	//commentString = joinComment(commentString, "")
 	for i < requestNum {
 		str := swagger_json.MakeComment(lib.AllRequest[i])
 		commentString = joinComment(commentString, "")
@@ -66,8 +66,8 @@ func main() {
 			commentString = joinComment(commentString, c)
 		}
 
-		commentString = joinComment(commentString, "")
-		commentString = joinComment(commentString, "\n\n")
+		//commentString = joinComment(commentString, "")
+		//commentString = joinComment(commentString, "\n")
 		i = i + 1
 	}
 
