@@ -1,7 +1,8 @@
-package lib
+package swagger_json
 
 import (
 	"github.com/tidwall/gjson"
+	"postman2swagger/src/lib"
 	"regexp"
 	"strings"
 )
@@ -21,14 +22,14 @@ func MakeTile(host string, basePath string, version string, title string, descri
 	comment := make([]string, 0)
 	blankIndex := 0
 
-	comment = append(comment, blankRepeat(blankIndex)+" @SWG\\Swagger(")
+	comment = append(comment, blankRepeat(blankIndex)+" \"swagger\": \"2.0\",")
 	blankIndex = blankIndex + 1
 
 	comment = append(comment, blankRepeat(blankIndex)+"schemes={\"http\",\"https\"},")
 
 	comment = append(comment, blankRepeat(blankIndex)+"host=\""+host+"\",")
 	comment = append(comment, blankRepeat(blankIndex)+"basePath=\""+basePath+"\",")
-	comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Info(")
+	comment = append(comment, blankRepeat(blankIndex)+"\"Info\": {")
 
 	blankIndex = blankIndex + 1
 
@@ -36,41 +37,46 @@ func MakeTile(host string, basePath string, version string, title string, descri
 	comment = append(comment, blankRepeat(blankIndex)+"title=\""+title+"\",")
 	comment = append(comment, blankRepeat(blankIndex)+"description=\""+description+"\",")
 	comment = append(comment, blankRepeat(blankIndex)+"termsOfService=\"\",")
-	comment = append(comment, blankRepeat(blankIndex)+"@SWG\\Contact(")
+	comment = append(comment, blankRepeat(blankIndex)+"\"Contact\": {")
 	blankIndex = blankIndex + 1
 	comment = append(comment, blankRepeat(blankIndex)+"email=\""+contact+"\"")
 
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+")")
+	comment = append(comment, blankRepeat(blankIndex)+"}")
 
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+")")
-	blankIndex = blankIndex - 1
-
-	comment = append(comment, blankRepeat(blankIndex)+")")
+	comment = append(comment, blankRepeat(blankIndex)+"}")
 
 	return comment
 }
 
-func MakeComment(singeRequest Request) []string {
+func MakeComment(singeRequest lib.Request) []string {
 	comment := make([]string, 0)
-	blankIndex := 0
+	blankIndex := 1
+	comment = append(comment, blankRepeat(blankIndex)+"\"paths\": {")
+	blankIndex = blankIndex + 1
+
+	//path
+	comment = append(comment, blankRepeat(blankIndex)+"\""+singeRequest.Path+"\": {")
+	blankIndex = blankIndex + 1
 
 	//请求方式
-	comment = append(comment, " @SWG\\"+singeRequest.Method+"(")
-
+	comment = append(comment, "\""+singeRequest.Method+"\": {")
 	blankIndex = blankIndex + 1
 
 	//tags
 	tags := strings.Split(singeRequest.Name, "/")[0]
-	comment = append(comment, blankRepeat(blankIndex)+"tags={\""+tags+"\"},")
+	comment = append(comment, blankRepeat(blankIndex)+"\"tags\": [")
+	blankIndex = blankIndex + 1
 
-	//path
-	comment = append(comment, blankRepeat(blankIndex)+"path=\""+singeRequest.Path+"\",")
+	comment = append(comment, blankRepeat(blankIndex)+tags)
+
+	blankIndex = blankIndex - 1
+	comment = append(comment, blankRepeat(blankIndex)+"]")
 
 	//summary
 	summary := strings.Replace(singeRequest.Name, "/", "-", -1)
-	comment = append(comment, blankRepeat(blankIndex)+"summary=\""+summary+"\",")
+	comment = append(comment, blankRepeat(blankIndex)+"\"summary\":\""+summary+"\"")
 
 	//deprecated
 	deprecated := strings.Contains(singeRequest.Name, "无效")
@@ -121,13 +127,13 @@ func MakeComment(singeRequest Request) []string {
 		comment = append(comment, blankRepeat(blankIndex)+"),")
 
 	} else if singeRequest.Body.Mode == "formdata" {
-		for _, singleBodyParameter := range singeRequest.Body.Content.([]Parameter) {
+		for _, singleBodyParameter := range singeRequest.Body.Content.([]lib.Parameter) {
 			//singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"body\",description=\"" + singleBodyParameter.Description + "\"),"
 			singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
 			comment = append(comment, blankRepeat(blankIndex)+singeBodyParameter)
 		}
 	} else if singeRequest.Body.Mode == "urlencoded" {
-		for _, singleBodyParameter := range singeRequest.Body.Content.([]Parameter) {
+		for _, singleBodyParameter := range singeRequest.Body.Content.([]lib.Parameter) {
 			singeBodyParameter := "@SWG\\Parameter(name =\"" + singleBodyParameter.Key + "\", type=\"" + singleBodyParameter.Type + "\", required=true, in=\"formdata\",description=\"" + singleBodyParameter.Description + "\"),"
 			comment = append(comment, blankRepeat(blankIndex)+singeBodyParameter)
 		}

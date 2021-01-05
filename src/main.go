@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"postman2swagger/src/lib"
+	"postman2swagger/src/lib/swagger-json"
 )
 
 var (
@@ -52,24 +53,20 @@ func main() {
 		os.Exit(0)
 	}
 	i := 0
-	commentString := "<?php\n/**"
-	comment := lib.MakeTile(*host, *basePath, *version, *title, *description, *contact)
+	commentString := "{\n"
+	comment := swagger_json.MakeTile(*host, *basePath, *version, *title, *description, *contact)
 	for _, c := range comment {
-		commentString = joinComment(commentString, " *"+c)
+		commentString = joinComment(commentString, c)
 	}
-	commentString = joinComment(commentString, " */\n\n")
-	/*	for _,v := range lib.AllRequest {
-		fmt.Println(v.Path)
-	}*/
-	//panic(9)
+	commentString = joinComment(commentString, "\n\n")
 	for i < requestNum {
-		str := lib.MakeComment(lib.AllRequest[i])
-		commentString = joinComment(commentString, "/**")
+		str := swagger_json.MakeComment(lib.AllRequest[i])
+		commentString = joinComment(commentString, "")
 		for _, c := range str {
-			commentString = joinComment(commentString, " *"+c)
+			commentString = joinComment(commentString, c)
 		}
 
-		commentString = joinComment(commentString, " */")
+		commentString = joinComment(commentString, "")
 		commentString = joinComment(commentString, "\n\n")
 		i = i + 1
 	}
