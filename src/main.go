@@ -9,14 +9,14 @@ import (
 )
 
 var (
-	inputFile = flag.String("source", "/Users/xxxx/Desktop/crm2.postman_collection.json", "Postman 导出的json文件")
+	inputFile = flag.String("source", "/Users/yons/Downloads/test01.json", "Postman 导出的json文件")
 	//inputFile  = flag.String("source", "/Users/zabon/Desktop/code/元典接口/yang/crm-yang.20191231.json", "Postman 导出的json文件")
-	outputFile = flag.String("output", "/Users/xxxx/code/swagger-php/result.php", "产生的注释文件")
+	outputFile = flag.String("output", "/Users/yons/code/swagger-php/result.php", "产生的注释文件")
 
-	host        = flag.String("host", "tpa.test", "项目地址,例如：api.xx.com")
+	host        = flag.String("host", "192.168.2.199:8086", "项目地址,例如：ilessonpen.com")
 	basePath    = flag.String("base_path", "/", "项目地址,例如 /")
-	title       = flag.String("title", "xxxAPI", "项目名称")
-	description = flag.String("description", "易点通crm", "项目描述")
+	title       = flag.String("title", "校外生训v1.0.0", "校外生训")
+	description = flag.String("description", "评测", "校外生训v1")
 	version     = flag.String("version", "v1", "项目版本号")
 	contact     = flag.String("contact", "bonzaphp@gmail.com", "联系方式")
 )
