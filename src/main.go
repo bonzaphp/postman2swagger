@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	inputFile = flag.String("source", "/Users/yangshiguo/Downloads/test01.json", "Postman 导出的json文件")
+	inputFile = flag.String("source", "/Users/yons/Downloads/test01.json", "Postman 导出的json文件")
 	//inputFile  = flag.String("source", "/Users/zabon/Desktop/code/元典接口/yang/crm-yang.20191231.json", "Postman 导出的json文件")
-	outputFile = flag.String("output", "/Users/yangshiguo/code/swagger-php/result.php", "产生的注释文件")
+	outputFile = flag.String("output", "/Users/yons/code/swagger-php/result.json", "产生的注释文件")
 
 	host        = flag.String("host", "192.168.2.199:8086", "项目地址,例如：ilessonpen.com")
 	basePath    = flag.String("base_path", "/", "项目地址,例如 /")
@@ -42,7 +42,6 @@ func main() {
 			// log etc
 		}
 	}()
-	//defer file.Close()
 
 	fileContent, err := ioutil.ReadAll(file)
 	lib.FindRequest(string(fileContent), "")
@@ -53,15 +52,15 @@ func main() {
 		os.Exit(0)
 	}
 	i := 0
-	commentString := "{\n"
+	commentString := "{"
 	comment := swagger_json.MakeTile(*host, *basePath, *version, *title, *description, *contact)
 	for _, c := range comment {
 		commentString = joinComment(commentString, c)
 	}
 	//commentString = joinComment(commentString, "")
 	for i < requestNum {
-		str := swagger_json.MakeComment(lib.AllRequest[i])
-		commentString = joinComment(commentString, "")
+		str := swagger_json.GeneratePaths(lib.AllRequest[i])
+		//commentString = joinComment(commentString, "")
 		for _, c := range str {
 			commentString = joinComment(commentString, c)
 		}
@@ -70,17 +69,12 @@ func main() {
 		//commentString = joinComment(commentString, "\n")
 		i = i + 1
 	}
-
-	//panic(3)
 	f, err := os.OpenFile(*outputFile, os.O_RDWR|os.O_CREATE, 0755)
 	defer func() {
 		if err := f.Close(); err != nil {
-			//log.Println(`file no found`)
 			panic(err)
-			// log etc
 		}
 	}()
-	//defer f.Close()
 	if err != nil {
 		color.Red(err.Error())
 	} else {
