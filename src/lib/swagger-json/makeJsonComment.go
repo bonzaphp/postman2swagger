@@ -166,16 +166,16 @@ func GeneratePaths(singeRequest lib.Request) []string {
 	}
 
 	//comment = append(comment, blankRepeat(blankIndex)+singeParameter)
-	comment = append(comment, blankRepeat(blankIndex)+"],")
+	comment = append(comment, blankRepeat(blankIndex)+"]")
 
 	//Response
-	comment, blankIndex = generateResponse(comment, blankIndex, singeRequest)
+	//comment, blankIndex = generateResponse(comment, blankIndex, singeRequest)
 	//blankIndex = blankIndex + 1
 	//comment = append(comment, blankRepeat(blankIndex)+"}")
-	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"}")
-	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"}")
+	//blankIndex = blankIndex - 1
+	//comment = append(comment, blankRepeat(blankIndex)+"}")
+	//blankIndex = blankIndex - 1
+	//comment = append(comment, blankRepeat(blankIndex)+"}")
 	blankIndex = blankIndex - 1
 	comment = append(comment, blankRepeat(blankIndex)+"}")
 	blankIndex = blankIndex - 1
