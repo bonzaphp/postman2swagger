@@ -98,6 +98,8 @@ func GeneratePaths(singeRequest lib.Request) []string {
 	//summary说明
 	summary := strings.Replace(singeRequest.Name, "/", "-", -1)
 	comment = append(comment, blankRepeat(blankIndex)+"\"summary\":\""+summary+"\",")
+	//description描述
+	comment = append(comment, blankRepeat(blankIndex)+"\"description\":\""+singeRequest.Description+"\",")
 
 	//deprecated遗弃
 	deprecated := strings.Contains(singeRequest.Name, "无效")
@@ -173,9 +175,7 @@ func GeneratePaths(singeRequest lib.Request) []string {
 	blankIndex = blankIndex - 1
 	comment = append(comment, blankRepeat(blankIndex)+"}")
 	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"}")
-	blankIndex = blankIndex - 1
-	comment = append(comment, blankRepeat(blankIndex)+"}")
+	comment = append(comment, blankRepeat(blankIndex)+"},")
 	return comment
 }
 

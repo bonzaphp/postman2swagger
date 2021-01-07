@@ -22,13 +22,14 @@ type Body struct {
 }
 
 type Request struct {
-	Name     string
-	Method   string
-	Host     string
-	Path     string
-	Body     Body
-	Response string
-	Query    []Parameter
+	Name        string
+	Description string
+	Method      string
+	Host        string
+	Path        string
+	Body        Body
+	Response    string
+	Query       []Parameter
 }
 
 var AllRequest []Request
@@ -55,6 +56,8 @@ func ParseRequest(body gjson.Result, ParentName string) {
 
 	name := ParentName + "/" + body.Get("name").String()
 	method := body.Get("request.method").String()
+
+	desc := body.Get("request.description").String()
 
 	hostData := body.Get("request.url.host").Value()
 	if hostData == nil {
@@ -91,7 +94,7 @@ func ParseRequest(body gjson.Result, ParentName string) {
 			bodyRequest.Content = parseQuery(body.Get("request.body.urlencoded").Value().([]interface{}))
 		}
 	}
-	AllRequest = append(AllRequest, Request{Name: name, Method: method, Host: host, Path: path, Query: query, Response: Response, Body: bodyRequest})
+	AllRequest = append(AllRequest, Request{Name: name, Description: desc, Method: method, Host: host, Path: path, Query: query, Response: Response, Body: bodyRequest})
 
 }
 
