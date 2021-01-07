@@ -57,18 +57,22 @@ func main() {
 	for _, c := range comment {
 		commentString = joinComment(commentString, c)
 	}
-	//commentString = joinComment(commentString, "")
+	var tmpComment []string
+	tmpComment = make([]string, 0)
 	for i < requestNum {
 		str := swagger_json.GeneratePaths(lib.AllRequest[i])
-		//commentString = joinComment(commentString, "")
+		var item string
 		for _, c := range str {
-			commentString = joinComment(commentString, c)
+			item = joinComment(item, c)
 		}
-
-		//commentString = joinComment(commentString, "")
-		//commentString = joinComment(commentString, "\n")
+		tmpComment = append(tmpComment, item)
 		i = i + 1
 	}
+	tmpStr := lib.ArrToString(tmpComment, ",")
+	commentString = joinComment(commentString, tmpStr)
+	commentString = joinComment(commentString, "")
+	commentString += "}" //path闭合
+	commentString += "}" //全局闭合
 	f, err := os.OpenFile(*outputFile, os.O_RDWR|os.O_CREATE, 0755)
 	defer func() {
 		if err := f.Close(); err != nil {
